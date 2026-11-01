@@ -1,17 +1,51 @@
-# photo_of_the_day
+# Лабораторная работа №8. Асинхронность в Dart и Flutter.
 
-A new Flutter project.
 
-## Getting Started
+Создание приложения «Фото дня»
 
-This project is a starting point for a Flutter application.
+Автор: Окишев Максим
+Группа: ИСП-242
 
-A few resources to get you started if this is your first Flutter project:
+# Стек и версии
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter: 3.47.9
+- Dart: 3.13.7
+- http: 1.6.0
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Скриншот приложения
+
+![img final](img/step3.png)
+
+## Запуск
+1. `git clone <url>`
+2. `cd photo_of_the_day`
+3. `flutter pub get`
+4. `flutter run -d chrome`
+
+# Что изучили?
+
+- Концепцию асинхронного программирования
+- Future
+- async/await
+
+# Ответы на вопросы
+1. Future<T> vs обычное значение?
+
+Обычное значение возвращается сразу. Future<T> — это «обещание» вернуть результат T позже. Нужен для асинхронных задач, чтобы не блокировать программу.
+
+2. Что делает await? Блокирует поток?
+
+Приостанавливает текущую функцию, пока Future не завершится. Весь поток не блокирует — UI продолжает работать, анимации крутятся.
+
+3. Зачем setState() дважды?
+
+1-й раз — в начале (_isLoading = true), чтобы показать спиннер. 2-й — в конце (_isLoading = false), чтобы скрыть его и показать картинку.
+
+4. Почему _fetchPhoto без скобок?
+
+onPressed ждёт ссылку на функцию, чтобы вызвать её по клику. Если написать со скобками _fetchPhoto(), она выполнится сразу при отрисовке экрана, а кнопке достанется null.
+
+5. Image.network() vs Image.asset()?
+
+network качает картинку из интернета по URL. asset берёт локальный файл из папки assets внутри приложения. В нашем коде локальные пути, поэтому нужен asset.
+

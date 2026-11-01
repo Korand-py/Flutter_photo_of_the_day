@@ -17,6 +17,13 @@ class _PhotoPageState extends State<PhotoPage> {
   String? _errorMessage;
   PhotoType _animalType = PhotoType.dog;
 
+  // Список перенесен сюда, так как он используется в _PhotoPageState
+  final List<String> _localPhotos = [
+    'assets/images/photo-1.jpg',
+    'assets/images/photo-2.jpg',
+    'assets/images/photo-3.jpg',
+  ];
+
   Future<void> _fetchPhoto() async {
     setState(() {
       _isLoading = true;
@@ -25,26 +32,24 @@ class _PhotoPageState extends State<PhotoPage> {
     });
 
     try {
-      String url;
-      http.Response response;
-
-      if (_animalType == PhotoType.dog) {
-        url = 'https://dog.ceo/api/breeds/image/random';
-        response = await http.get(Uri.parse(url));
-
-        if (response.statusCode != 200) {
-          throw Exception('HTTP ${response.statusCode}');
-        }
-
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        _imageUrl = data['message'] as String?;
-      } else {
-        final random = DateTime.now().millisecondsSinceEpoch;
-        _imageUrl = 'https://picsum.photos/seed/$random/800/800';
+      // Имитируем сетевую задержку (чтобы был красивый лоадер)
+      await Future.delayed(const Duration(seconds: 2));
+      // Рандомно выбираем фото
+      final randomIndex =
+          DateTime.now().millisecondsSinceEpoch % _localPhotos.length;
+      
+      // Обернули присвоение в setState, чтобы картинка появилась на экране
+      if (mounted) {
+        setState(() {
+          _imageUrl = _localPhotos[randomIndex];
+        });
       }
     } catch (e) {
-      _errorMessage =
-          'Не удалось загрузить фото.\nПроверьте подключение к интернету.';
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Ошибка загрузки фото';
+        });
+      }
     }
 
     if (mounted) {
@@ -138,7 +143,8 @@ class _PhotoPageState extends State<PhotoPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
-            child: Image.network(
+            // Заменено на Image.asset, так как теперь грузятся локальные фото
+            child: Image.asset(
               _imageUrl!,
               fit: BoxFit.cover,
               width: double.infinity,
